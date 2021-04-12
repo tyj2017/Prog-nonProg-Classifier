@@ -36,3 +36,7 @@ data
 │   ├── Other
 │   └── Progressive Rock Songs
 ```
+
+For training set, move the 2 subfolders under `Not_Progressive_Rock`
+1 level up. Otherwise the script does not work.
+
