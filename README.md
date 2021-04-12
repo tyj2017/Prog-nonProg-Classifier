@@ -11,32 +11,29 @@ You also need ffmpeg to process the audio files.
 ## Preprocessing
 
 First we need to convert all audio files to the same sample rate 22050Hz.
-The initial folder structure:
+The folder structure is listed below. The `*_raw` folders contains the 
+raw audio files of different formats and sample rates.
+The `*_22050hz` folders are created by the `fix_sample_rate.py` script
+automatically.
 
-```
-data
-├── test_raw
-│   ├── Not_Progressive_Rock
-│   ├── Other
-│   └── Progressive Rock Songs
-```
-Then run the convesion script
-
-    $ ./fix_sample_rate data/test_raw data/test_22050hz
-
-The resulting folder structure: 
 ```
 data
 ├── test_22050hz
-│   ├── Not_Progressive_Rock
-│   ├── Other
-│   └── Progressive Rock Songs
+│   ├── nonprog
+│   └── prog
 ├── test_raw
-│   ├── Not_Progressive_Rock
-│   ├── Other
-│   └── Progressive Rock Songs
+│   ├── nonprog
+│   └── prog
+├── train_22050hz
+│   ├── nonprog
+│   └── prog
+└── train_raw
+    ├── nonprog
+    └── prog
 ```
+To convert all audio files in the test set to mp3 with sample
+rate 22050Hz, run
 
-For training set, move the 2 subfolders under `Not_Progressive_Rock`
-1 level up. Otherwise the script does not work.
+    $ ./fix_sample_rate data/test_raw data/test_22050hz
 
+By default, the script will use 4 worker processed to do the conversion.
