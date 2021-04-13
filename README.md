@@ -1,7 +1,7 @@
 # Prog-nonProg-Classifier
 the hemispheres
 
-## Set up the environment
+## Environment setup
 
     $ conda create --name rock --file requirements.txt
     $ conda activate rock
@@ -37,3 +37,7 @@ rate 22050Hz, run
     $ ./fix_sample_rate data/test_raw data/test_22050hz
 
 By default, the script will use 4 worker processed to do the conversion.
+
+## Classification on tabular data
+
+## Classification using sequence models
