@@ -19,7 +19,7 @@ from tensorflow import keras
 df = pd.read_csv('test.csv')
 print(f'prog fraction = {df.target.mean()}')
 
-model = keras.models.load_model('dnn-v0.h5')
+model = keras.models.load_model('dnn/dnn.h64h32.epoch1000.h5')
 df['pred'] = model.predict(df.iloc[:, 3:])
 res = df.groupby(by=['filename', 'target'], as_index=False)['pred'].mean()
 res['pred_class'] = (res.pred > 0.5)
