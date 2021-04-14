@@ -28,12 +28,12 @@ def plot_conf_mat(mat):
             plt.text(col, row, mat[row][col], ha='center', va='center')
     plt.colorbar()
 
-df = pd.read_csv('test.csv')
+df = pd.read_csv('test4.csv')
 print(f'prog fraction = {df.target.mean()}')
 
-output_path = 'dnn'
-model_name = 'dnn.h64h32'
-epochs=600
+output_path = 'dnn2'
+model_name = 'dnn.h128h32.dropout'
+epochs=400
 
 model = keras.models.load_model(f'{output_path}/{model_name}.epoch{epochs}.h5')
 df['pred'] = model.predict(df.iloc[:, 3:])

@@ -29,6 +29,9 @@ def create_features(seg):
     '''Create features from an audio segment'''
     mfcc = librosa.feature.mfcc(seg, n_mfcc=40)
     mfcc_mean          = list(np.mean(mfcc, axis=1))
+    chroma_stft = librosa.feature.chroma_stft(seg)
+    chroma_stft_mean   = list(np.mean(chroma_stft, axis=1))
+    tempo              = list(librosa.beat.tempo(seg, start_bpm=80))
     rms                = list(np.mean(librosa.feature.rms(seg), axis=1))
     zcr                = list(np.mean(librosa.feature.zero_crossing_rate(seg), axis=1))
     spectral_centroid  = list(np.mean(librosa.feature.spectral_centroid(seg), axis=1))
@@ -36,7 +39,7 @@ def create_features(seg):
     # spectral_contrast  = list(np.mean(librosa.feature.spectral_contrast(seg), axis=1))
     spectral_flatness  = list(np.mean(librosa.feature.spectral_flatness(seg), axis=1))
     spectral_rolloff   = list(np.mean(librosa.feature.spectral_rolloff(seg), axis=1))
-    feat = mfcc_mean + rms + zcr + spectral_centroid + spectral_bandwidth + spectral_flatness + spectral_rolloff
+    feat = mfcc_mean + chroma_stft_mean + tempo + rms + zcr + spectral_centroid + spectral_bandwidth + spectral_flatness + spectral_rolloff
     # print(feat)
     # print(len(feat))
     return feat
@@ -83,17 +86,22 @@ if __name__ == '__main__':
                 data.append([target, os.path.basename(fname), part] +feat)
                 part += 1
 
-    features = [f'mfcc_{i}' for i in range(40)] + \
-        ['rms', 'zcr', 'sp_centroid', 'sp_bandwidth', 'sp_flatness', 'sp_rolloff']
+    features = [f'mfcc_{i}' for i in range(40)] + [f'chroma_{i}' for i in range(12)] + \
+        ['tempo', 'rms', 'zcr', 'sp_centroid', 'sp_bandwidth', 'sp_flatness', 'sp_rolloff']
     df = pd.DataFrame(data, columns=['target', 'filename', 'part'] + features)
 
     print('Normalizing data...')
     scaler = preprocessing.Normalizer()
     df.iloc[:, 3:] = scaler.fit_transform(df.iloc[:, 3:])
 
-    df.to_csv(args.output, index=False)
-    print(f'Shape of the data: {df.shape}')
+    prog_frac = df.target.mean()
     print(f'Fraction of prog segments: {df.target.mean()}')
+    prog_df = df.query('target == 1')
+    nonprog_df = df.query('target == 0')
+
+    print('Balancing prog and nonprog samples...')
+    balanced_df = pd.concat([prog_df.sample(frac=(1 - prog_frac) / prog_frac), nonprog_df], ignore_index=True)
+    balanced_df.to_csv(args.output, index=False)
 
 
 # test_create_features()
